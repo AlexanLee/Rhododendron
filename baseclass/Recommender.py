@@ -57,12 +57,12 @@ class Recommender(object):
         print 'Ratings dataset:', abspath(self.config['ratings'])
         if LineConfig(self.config['evaluation.setup']).contains('-testSet'):
             print 'Test set:', abspath(
-                LineConfig(self.config['evaluation.setup']).getOption('-testSet'))
+                    LineConfig(self.config['evaluation.setup']).getOption('-testSet'))
         # print 'Count of the users in training set: ',len()
         print 'Training set size: (user count: %d, item count %d, record count: %d)' % (
-        self.dao.trainingSize())
+            self.dao.trainingSize())
         print 'Test set size: (user count: %d, item count %d, record count: %d)' % (
-        self.dao.testSize())
+            self.dao.testSize())
         print '=' * 80
 
     def initModel(self):
@@ -100,11 +100,11 @@ class Recommender(object):
         for ind, entry in enumerate(self.dao.testData):
             user, item, rating = entry
 
-            print("user :"+user)
+            # print("user :" + user)
             # predict
             prediction = self.predict(user, item)
 
-            print("prediction:"+str(prediction))
+            # print("prediction:" + str(prediction))
             # denormalize
             prediction = denormalize(prediction, self.dao.rScale[-1], self.dao.rScale[0])
             #####################################
@@ -116,8 +116,10 @@ class Recommender(object):
         # output prediction result
         if self.isOutput:
             outDir = self.output['-dir']
-            fileName = self.config[
-                           'recommender'] + '@' + currentTime + '-rating-predictions' + self.foldInfo + '.txt'
+            # fileName = self.config[
+            #                'recommender'] + '@' + currentTime + '-rating-predictions' + self.foldInfo + '.txt'
+
+            fileName = self.config['recommender'] + ".txt"
             FileIO.writeFile(outDir, fileName, res)
             print 'The result has been output to ', abspath(outDir), '.'
         # output evaluation result
@@ -144,7 +146,7 @@ class Recommender(object):
             exit(-1)
 
         res.append(
-            'userId: recommendations in (itemId, ranking score) pairs, * means the item matches.\n')
+                'userId: recommendations in (itemId, ranking score) pairs, * means the item matches.\n')
         # predict
         recList = {}
         userN = {}
@@ -221,8 +223,11 @@ class Recommender(object):
         if self.isOutput:
             fileName = ''
             outDir = self.output['-dir']
-            fileName = self.config['recommender'] + '@' + currentTime + '-top-' + str(
-                    N) + 'items' + self.foldInfo + '.txt'
+            # fileName = self.config['recommender'] + '@' + currentTime + '-top-' + str(
+            #         N) + 'items' + self.foldInfo + '.txt'
+
+            fileName = self.config['recommender'] + ".txt"
+            print(fileName)
             FileIO.writeFile(outDir, fileName, res)
             print 'The result has been output to ', abspath(outDir), '.'
         # output evaluation result
