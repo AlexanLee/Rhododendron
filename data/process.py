@@ -1,4 +1,6 @@
 import sys
+from itertools import groupby
+from operator import itemgetter
 
 sys.path.append("..")
 
@@ -31,8 +33,42 @@ def clean():
 
 
 def calc():
+    stock_f = open("../dataset/stock.txt")
+    with open("../dataset/log.txt") as f:
+        for ind, line in enumerate(f):
+            if line.strip() <> '':
+                li = line.split("\t")
+                x = li[0]
+                print("log line:" + x)
+                for sline in stock_f:
+                    if sline <> '':
+                        sli = sline.split("\t")
+                        print("stock line:" + sli[1])
+                        if x == sli[1]:
+                            print("===========" + x)
     return
 
 
+def read_mapper_output(file, separator='\t'):
+    for line in file:
+        l = line.rstrip().split(separator)
+        if len(l) > 5:
+            user = l[0]
+            item = l[1]
+            weight = l[6]
+            yield (user + "|" + item, weight)
+
+
+def reduce():
+    rate_f = file('../dataset/ratings.txt', 'w')
+    data = read_mapper_output(open('../dataset/log.txt'))
+    for user, group in groupby(data, itemgetter(0)):
+        total_count = sum(int(count) for item, count in group)
+        print("%s%s%d" % (user, '\t', total_count))
+        u = user.split('|')
+        print >> rate_f, u[1], u[0], total_count
+
+
 if __name__ == '__main__':
-    clean()
+    # clean()
+    reduce()
