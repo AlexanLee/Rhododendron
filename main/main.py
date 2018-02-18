@@ -58,22 +58,26 @@ class EchoService(pyrestful.rest.RestHandler):
                 print("r :{}".format(rs[1]))
 
         s = []
+        lt = []
         with open("../dataset/stock.txt") as f:
             for ind, line in enumerate(f):
                 if line.strip() <> '':
                     li = line.split("\t")
                     x = li[0]
+                    e = li[1]
                     if len(l) == 0:
                         s.append(str(x))
                     else:
                         for k in l:
-                            if x <> k:
+                            if e == k:
+                                lt.append(str(x))
+                            else:
                                 s.append(str(x))
         print(len(s))
         ret = random.sample(s, int(num) - len(l))
         for r in ret:
-            l.append(r)
-        return {"list": [l], "code": 200}
+            lt.append(r)
+        return {"list": [lt], "code": 200}
 
 
 if __name__ == '__main__':
