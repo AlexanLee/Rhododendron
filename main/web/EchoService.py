@@ -1,7 +1,7 @@
 import pyrestful.rest
 import tornado.ioloop
 
-# import random
+import random
 # import m4_predict
 from pyrestful import mediatypes
 from pyrestful.rest import get, post
@@ -28,7 +28,6 @@ class EchoService(pyrestful.rest.RestHandler):
             # print 'predict after'
             # if len(res) < 3:
             #     return {"list": [], "code": 1}
-            import random
             L = []
             for x in range(1, 10000):
                 L.append(x)
@@ -38,7 +37,6 @@ class EchoService(pyrestful.rest.RestHandler):
             return {"list": [ret], "code": 200}
         except Exception, e:
             print 'except.' + str(e)
-            import random
             ret = [random.randint(1, 10), random.randint(10, 20), random.randint(20, 30)]
             return {"list": [ret], "code": 200}
             # index=random.randint(0, 19)
@@ -60,9 +58,8 @@ class EchoService(pyrestful.rest.RestHandler):
             # return {"list": [1, 2, 3], "code": 200}
 
     @get(_path="/hello/{id}/{num}", _produces=mediatypes.APPLICATION_JSON)
-    def sayHello(self,id,num):
-        print(id+"\t"+num)
-        import random
+    def sayHello(self, id, num):
+        print(id + "\t" + num)
         l = []
         for x in range(1, 1000):
             l.append(x)

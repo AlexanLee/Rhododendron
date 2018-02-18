@@ -1,119 +1,59 @@
 import sys
+
 sys.path.append("..")
 from RecQ import RecQ
 from tool.config import Config
-from visual.display import Display
+
+import pyrestful.rest
+import tornado.ioloop
+
+import random
+from pyrestful import mediatypes
+from pyrestful.rest import get, post
 
 
+class EchoService(pyrestful.rest.RestHandler):
+    def data_received(self, chunk):
+        pass
+
+
+    @post(_path="/hack", _types=[str, str], _produces=mediatypes.APPLICATION_JSON)
+    def hack(self, num):
+        print str(self) + "\t" + str(num)
+        try:
+            print 'start.'
+            L = []
+            for x in range(1, 10000):
+                L.append(x)
+            if num is None or num < 3:
+                num = 3
+            ret = random.sample(L, num)
+            return {"list": [ret], "code": 200}
+        except Exception, e:
+            print 'except.' + str(e)
+            ret = [random.randint(1, 10), random.randint(10, 20), random.randint(20, 30)]
+            return {"list": [ret], "code": 200}
+
+    @get(_path="/hello/{id}/{num}", _produces=mediatypes.APPLICATION_JSON)
+    def sayHello(self, id, num):
+        print(id + "\t" + num)
+        conf=Config('../config/UserKNN.conf')
+        sysRec=RecQ(conf)
+        sysRec.execute()
+
+        l = []
+        for x in range(1, 1000):
+            l.append(x)
+        if num is None or num < 3:
+            num = 3
+        ret = random.sample(l, int(num))
+        return {"list": [ret], "code": 200}
 
 if __name__ == '__main__':
-
-    print '='*80
-    print '   RecQ: An effective python-based recommender algorithm library.   '
-    print '='*80
-    print '0. Analyze the input data.(Configure the visual.conf in config/visual first.)'
-    print '-' * 80
-    print 'Rating-based Recommenders:'
-    print '1. UserKNN        2. ItemKNN        3. BasicMF        4. SlopeOne        5. SVD'
-    print '6. PMF            7. SVD++          8. EE             9. BPR'
-
-    print 'Social Recommenders:'
-    print '10. RSTE          11. SoRec         12. SoReg         13. SocialMF     14. SBPR'
-    print '15. SREE'
-
-
-    print 'Advanced Recommenders:'
-    print '16. CoFactor      17. CUNE-MF       18. CUNE-BPR'
-
-    print 'Baselines:'
-    print 'b1. UserMean      b2. ItemMean      b3. MostPopular   b4. Rand'
-    print '='*80
-    algor = -1
-    conf = -1
-    order = raw_input('please enter the num of the algorithm to run it:')
-    import time
-    s = time.time()
-    if order == '0':
-        try:
-            import seaborn as sns
-        except ImportError:
-            print '!!!To obtain nice data charts, ' \
-                  'we strongly recommend you to install the third-party package <seaborn>!!!'
-        conf = Config('../config/visual/visual.conf')
-        Display(conf).render()
-        exit(0)
-    elif order == '1':
-        conf = Config('../config/UserKNN.conf')
-
-    elif order == '2':
-        conf = Config('../config/ItemKNN.conf')
-
-    elif order == '3':
-        conf = Config('../config/BasicMF.conf')
-
-    elif order == '4':
-        conf = Config('../config/SlopeOne.conf')
-
-    elif order == '5':
-        conf = Config('../config/SVD.conf')
-
-    elif order == '6':
-        conf = Config('../config/PMF.conf')
-
-    elif order == '7':
-        conf = Config('../config/SVD++.conf')
-
-    elif order == '8':
-        conf = Config('../config/EE.conf')
-
-    elif order == '9':
-        conf = Config('../config/BPR.conf')
-
-
-
-    elif order == '10':
-        conf = Config('../config/RSTE.conf')
-
-    elif order == '11':
-        conf = Config('../config/SoRec.conf')
-
-    elif order == '12':
-        conf = Config('../config/SoReg.conf')
-
-    elif order == '13':
-        conf = Config('../config/SocialMF.conf')
-
-    elif order == '14':
-        conf = Config('../config/SBPR.conf')
-
-    elif order == '15':
-        conf = Config('../config/SREE.conf')
-
-    elif order == '16':
-        conf = Config('../config/CoFactor.conf')
-
-    elif order == '17':
-        conf = Config('../config/CUNE_MF.conf')
-
-    elif order == '18':
-        conf = Config('../config/CUNE_BPR.conf')
-
-    elif order == 'b1':
-        conf = Config('../config/UserMean.conf')
-
-    elif order == 'b2':
-        conf = Config('../config/ItemMean.conf')
-
-    elif order == 'b3':
-        conf = Config('../config/MostPopular.conf')
-
-    elif order == 'b4':
-        conf = Config('../config/rand.conf')
-
-    else:
-        print 'Error num!'
-        exit(-1)
-    recSys = RecQ(conf)
-    recSys.execute()
-    e = time.time()
-    print "Run time: %f s" % (e - s)
+    try:
+        print("Start the echo service")
+        app = pyrestful.rest.RestService([EchoService])
+        app.listen(8080)
+        tornado.ioloop.IOLoop.instance().start()
+    except KeyboardInterrupt:
+        print("\nStop the echo service")

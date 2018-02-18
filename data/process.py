@@ -4,7 +4,8 @@ sys.path.append("..")
 
 from data import utils
 
-if __name__ == '__main__':
+
+def clean():
     source_log = file("/data/yuelin/xx.log")
     log_f = file('../dataset/log.txt', 'w')
     for line in source_log:
@@ -23,7 +24,15 @@ if __name__ == '__main__':
             location = fields.get("location", None)
             # print(fields.get("createdAt", None))
             # print("====" * 10)
-            print>> log_f, isbn + '\t' + unionId + '\t' + title + '\t' + classify + '\t' + location\
+            print>> log_f, isbn + '\t' + unionId + '\t' + title + '\t' + classify + '\t' + location \
                            + '\t' + gender + '\t' + action
         except:
             print("error:" + str(line))
+
+
+def calc():
+    return
+
+
+if __name__ == '__main__':
+    clean()
