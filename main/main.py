@@ -34,7 +34,7 @@ class EchoService(pyrestful.rest.RestHandler):
             return {"list": [ret], "code": 200}
 
     @get(_path="/hello/{is}/{id}/{num}", _produces=mediatypes.APPLICATION_JSON)
-    def sayHello(self, i, id, num):
+    def recommend(self, i, id, num):
         print(id + "\t" + num + "\t" + i)
         if num is None or num < 3:
             num = 3
@@ -63,10 +63,13 @@ class EchoService(pyrestful.rest.RestHandler):
                 if line.strip() <> '':
                     li = line.split("\t")
                     x = li[0]
-                    for k in l:
-                        if x <> k:
-                            s.append(str(x))
-
+                    if len(l) == 0:
+                        s.append(str(x))
+                    else:
+                        for k in l:
+                            if x <> k:
+                                s.append(str(x))
+        print(len(s))
         ret = random.sample(s, int(num) - len(l))
         for r in ret:
             l.append(r)
