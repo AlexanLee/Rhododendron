@@ -23,7 +23,6 @@ class Config(object):
 
     def readConfiguration(self, fileName):
         path = '../config/' + fileName
-        print("path: {}".format(path))
         if not os.path.exists(path):
             print 'config file is not found!'
             raise IOError

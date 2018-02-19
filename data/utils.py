@@ -33,7 +33,7 @@ def get_line_fields(line):
 
 
 def mongo(url, db):
-    client = MongoClient("localhost", 27017)
-    db = client['yuelin-used-book']
+    client = MongoClient(url, 27017)
+    db = client[db]
     collection = db.postbookmodels
     return collection

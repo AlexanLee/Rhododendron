@@ -13,6 +13,7 @@ from pyrestful.rest import get, post
 
 
 class EchoService(pyrestful.rest.RestHandler):
+
     def data_received(self, chunk):
         pass
 
@@ -33,17 +34,17 @@ class EchoService(pyrestful.rest.RestHandler):
             ret = [random.randint(1, 10), random.randint(10, 20), random.randint(20, 30)]
             return {"list": [ret], "code": 200}
 
-    @get(_path="/hello/{is}/{id}/{num}", _produces=mediatypes.APPLICATION_JSON)
+    @get(_path="/recommend/{is}/{id}/{num}", _produces=mediatypes.APPLICATION_JSON)
     def recommend(self, i, id, num):
         print(id + "\t" + num + "\t" + i)
+        conf = Config('../config/UserKNN.conf')
         if num is None or num < 3:
             num = 3
         if int(i) == 1:
-            conf = Config('../config/UserKNN.conf')
             sysRec = RecQ(conf)
             sysRec.execute()
 
-        model_f = open('../results/UserKNN.txt')
+        model_f = open(conf['model.file'])
         lr = []
         for line in model_f:
             l = line.split(' ')
@@ -59,7 +60,7 @@ class EchoService(pyrestful.rest.RestHandler):
 
         s = []
         lt = []
-        with open("../dataset/stock.txt") as f:
+        with open(conf['stock.file']) as f:
             for ind, line in enumerate(f):
                 if line.strip() <> '':
                     li = line.split("\t")
