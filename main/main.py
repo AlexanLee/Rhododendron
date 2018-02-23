@@ -1,5 +1,8 @@
+# _*_ coding:utf-8 _*_
 import sys
 
+reload(sys)
+sys.setdefaultencoding("latin-1")
 sys.path.append("..")
 from RecQ import RecQ
 from tool.config import Config
@@ -10,10 +13,10 @@ import tornado.ioloop
 import random
 from pyrestful import mediatypes
 from pyrestful.rest import get, post
+import urllib
 
 
 class EchoService(pyrestful.rest.RestHandler):
-
     def data_received(self, chunk):
         pass
 
@@ -34,9 +37,10 @@ class EchoService(pyrestful.rest.RestHandler):
             ret = [random.randint(1, 10), random.randint(10, 20), random.randint(20, 30)]
             return {"list": [ret], "code": 200}
 
-    @get(_path="/recommend/{is}/{id}/{num}", _produces=mediatypes.APPLICATION_JSON)
-    def recommend(self, i, id, num):
-        print(id + "\t" + num + "\t" + i)
+    @get(_path="/recommend/{is}/{id}/{location}/{num}", _produces=mediatypes.APPLICATION_JSON)
+    def recommend(self, i, id, location, num):
+        print(id + "\t" + num + "\t" + i + '\t' + urllib.unquote(location).decode('utf-8'))
+        location = urllib.unquote(location).decode('utf-8')
         conf = Config('../config/UserKNN.conf')
         if num is None or num < 3:
             num = 3
@@ -66,18 +70,21 @@ class EchoService(pyrestful.rest.RestHandler):
                     li = line.split("\t")
                     x = li[0]
                     e = li[1]
+                    loc = li[2]
                     if len(l) == 0:
                         s.append(str(x))
                     else:
                         for k in l:
                             if e == k:
                                 lt.append(str(x))
-                            else:
+                            elif location == loc.decode('utf-8'):
                                 s.append(str(x))
-        print(len(s))
-        ret = random.sample(s, int(num) - len(l))
-        for r in ret:
-            lt.append(r)
+        le = len(s)
+        print(le)
+        if le > (int(num) - len(l)):
+            ret = random.sample(s, int(num) - len(l))
+            for r in ret:
+                lt.append(r)
         return {"list": [lt], "code": 200}
 
 
@@ -85,7 +92,7 @@ if __name__ == '__main__':
     try:
         print("Start the echo service")
         app = pyrestful.rest.RestService([EchoService])
-        app.listen(8080)
+        app.listen(8888)
         tornado.ioloop.IOLoop.instance().start()
     except KeyboardInterrupt:
         print("\nStop the echo service")
