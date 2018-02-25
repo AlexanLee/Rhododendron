@@ -85,6 +85,9 @@ class EchoService(pyrestful.rest.RestHandler):
             ret = random.sample(s, int(num) - len(l))
             for r in ret:
                 lt.append(r)
+        else:
+            for r in s:
+                lt.append(r)
         return {"list": [lt], "code": 200}
 
 
