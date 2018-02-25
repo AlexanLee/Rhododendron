@@ -1,4 +1,5 @@
 import sys
+import os
 from itertools import groupby
 from operator import itemgetter
 
@@ -14,22 +15,27 @@ class process(object):
         self.config = config
 
     def clean(self):
-        source_log = open(self.config['source.log.file'])
+        source_log = self.config['source.log.file']
+        files = os.listdir(source_log)
+        if len(files) < 1:
+            print("error: not have files.")
+            return
         log_f = file(self.config['process.log.file'], 'w')
-        for line in source_log:
-            try:
-                fields = utils.get_line_fields(line)
-                action = fields.get("action", 0)
-                isbn = fields.get("isbn", None)
-                title = fields.get("title", None)
-                classify = fields.get("classify", None)
-                unionId = fields.get("unionId", None)
-                gender = fields.get("gender", None)
-                location = fields.get("location", None)
-                print>> log_f, isbn + '\t' + unionId + '\t' + title + '\t' + classify + '\t' + location \
-                               + '\t' + gender + '\t' + action
-            except:
-                print("error:" + str(line))
+        for fi in files:
+            for line in open(os.path.join(source_log, fi)):
+                try:
+                    fields = utils.get_line_fields(line)
+                    action = fields.get("action", 0)
+                    isbn = fields.get("isbn", None)
+                    title = fields.get("title", None)
+                    classify = fields.get("classify", None)
+                    unionId = fields.get("unionId", None)
+                    gender = fields.get("gender", None)
+                    location = fields.get("location", None)
+                    print>> log_f, isbn + '\t' + unionId + '\t' + title + '\t' + classify + '\t' + location \
+                                   + '\t' + gender + '\t' + action
+                except:
+                    print("error:" + str(line))
 
     @staticmethod
     def read_mapper_output(file, separator='\t'):
