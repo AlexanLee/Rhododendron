@@ -74,11 +74,14 @@ class EchoService(pyrestful.rest.RestHandler):
                     if len(l) == 0:
                         s.append(str(x))
                     else:
+                        b_append = False
                         for k in l:
                             if e == k:
                                 lt.append(str(x))
                             elif location == loc.decode('utf-8'):
-                                s.append(str(x))
+                                b_append = True
+                        if b_append:
+                            s.append(str(x))
         le = len(s)
         print(le)
         if le > (int(num) - len(l)):
